@@ -73,7 +73,7 @@ Accountable together -- we are Purdue.''}
 \begin{table}[h!]
   \begin{center}
     \label{tab:table1}
-    \begin{tabular}{c|ccccc|c|c}
+    \begin{tabular}{c|c|c|c|c|c|c|c}
       Student & Algorithm Development & Complexity Analysis & Implementation & Performance Analysis/Testing & Report & Overall & DIFF\\
       \hline
       Arisa Kulkarni & 20 & 20 & 20 & 20 & 20 & 100 & 0\\
@@ -107,32 +107,35 @@ Accountable together -- we are Purdue.''}
 %MAIN TEXT OF REPORT
 \newpage
 \section{Executive Summary}
-The following report details the team's optimization algorithms for adversarial attacks on a binary image classifier. Given a pre-trained image classifier that determines if a given image is a dandelion or grass, the team created five different machine learning/optimization algorithms to fool the image classifier. Each algorithm has a specific weight based on the expected performance of the given imputed image. The machine learning and optimization algorithms provide a foundation that can be used in the real-world application of AI infrastructure in many different organizational domains. 
+The following report details the team's optimization algorithms for adversarial attacks on a binary image classifier. Given a pre-trained binary convoluted neural network (CNN) image classifier that determines if a given image is a dandelion or grass, the team created five different machine learning/optimization algorithms to fool the image classifier. Each algorithm has a specific weight based on the expected performance of the given imputed image. The machine learning and optimization algorithms provide a foundation that can be used in the real-world application of AI infrastructure in many different organizational domains. 
 
 %Introduction & Objectives
 \section{Introduction \& Objectives}
-Machine learning algorithms are used to teach computers specific tasks; in this project, that task is a binary classification of images. These algorithms go through a training period to learn the information directly from trial and error. Each iteration of training improves performance. The training code was given to the team to evaluate and decide the best course of action to trick.
+Machine learning algorithms are used to teach computers specific tasks; in this project, that task is a binary classification of images. These algorithms go through a training period to learn the information directly from trial and error. Each iteration of training improves performance. The training code was given to the team to evaluate and decide the best course of action to trick. \newline
 
-The objectives for the team was to:
-
+\noindent At a high level, the objectives for the team were to:
 \begin{enumerate}
-
+\item Create five different machine learning and/or optimization algorithms that each fool the classifier into thinking the image is not what it actually is.
+\item The five algorithms will each give a probability deciding if the image is a dandelion or grass. 
+\item Based on testing, each of the five algorithms will be given a weight of 1-5 (5 being the best, 1 being the worst) that will be used to determine what the image is. \textbf{(subject to change)}
+\item The results from the five algorithms will go into the weighted algorithm to officially give a result.
 \end{enumerate}
 
 
 %Image Classifiers
 \section{Image Classifiers}
+The image classifier provided for this project is an example of a convoluted neural network (CNN). Once it is trained, the way a CNN works is by sampling small sections of an input image and calculating the convolution of neighboring pixel values (ApokalypsePartyTeam, 2021). In other words, it calculates 
 
 %Aversary Attack Prevention
 \section{Adversary Attack Prevention}
 
+
 %Algorithm Explanation 
 \section{Machine Learning and Optimization Algorithms}
 \subsection{Fast Gradient Sign Method}
-Fast Gradient Sign Method, or FGSM, was one method used for a child algorithm. It is used to adjust the images in order to trick the algorithm. It is meant to trick the image processor by creating a new image from an input image that appears identical to the original to the human eye, but will cause the processor to be incorrect. It accomplishes this by computing the gradients of a loss function and then uses the sign of the gradients to create a new image. The following codes show the FGSM function as attempted by the group. 
+Fast Gradient Sign Method, or FGSM, was one method used for a child algorithm. This method was chosen because it is specially designed to create adversarial images, which are images meant to confuse a convoluted neural network and cause a misclassification (Rosebrock, 2021). Not only does it confuse a CNN, but FSGM also causes a CNN to confidently make a mistake. It accomplishes this by computing a loss function from the gradients of the input image from the CNN. The FGSM then determines which input pixels contribute to the loss value the most, and adjusts them accordingly to create the adversarial image. The result is a "white box" attack, or a new image that appears identical to the input image to the human eye, but confuses the CNN by adjusting the colors of pixels slightly. The following codes show the FGSM function as used by the group. 
 
 \begin{lstlisting}[language=R, frame=single]
-install.packages("imager")
 library(keras)
 library(imager)
 
@@ -163,7 +166,7 @@ class_label <- class.ind2label(pred)
 \end{lstlisting}
 
 \subsection{Simulated Annealing}
-Simulated Annealing algorithm takes a heuristic approach for optimization problems. It is modeled from the annealing procedure of metal working. This approach was taken due to the common problems of other optimization algorithms that simply check their neighbourhood solutions and may get stuck in local minima. The SA algorithm incorporates two iterative loops that are modeled after the annealing process and the Metropolis criterion. The metropolis criterion is used explicitly to avoid the trap of getting stuck in local extreme. As you can see Simulated Annealing is a pure optimization algorithm. To use it for the purposes of tricking the image classification the objective function would focus on finding the pixels it can change. 
+Simulated Annealing algorithm takes a heuristic approach for optimization problems. It is modeled from the annealing procedure of metal working, where a metal is heated and then slowly cooled to make its crystal structure more stable. Similarly, in simulated annealing the algorithm starts with a high temperature, which allows it to explore a wide range of solutions an then gradually cools down to a low temperature, which forces the algorithm to converge toward the global minimum.
 
 \begin{lstlisting}[language=R, frame=single]
 
@@ -196,7 +199,28 @@ Put solution highlights here.
 
 
 \subsection{Testing/Correctness/Verification}
-To test the algorithms, the group first observed the success of the training model itself, without any adversarial attacks. The group tested both the grass set and the dandelion set, and kept results separate. This provided control group scores for which to compare the score of the sub-algorithms. The group then repeated the process for the datasets with \\
+To test the algorithms, the group first observed the success of the training model itself, without any adversarial attacks. The group tested both the grass set and the dandelion set, and kept results separate. This provided control group scores for which to compare the score of the sub-algorithms. The group then repeated the process for each the data sets with each sub-algorithm and tracked their success in fooling the model. Results are displayed in the table below.\\\\
+Regarding correctness of the algorithm, the group added dummy images to the data sets, such as a bike and a bus. The group then repeated the testing as described above to observe the ability of the model to detect these non-target images, and the effect to which each sub-algorithm alters the success of the model in detecting them. Results are displayed in the table below.\\\\
+To verify the precision of these models, sub-algorithms, and the larger weighted algorithm, each of the above tests were repeated twice more. This was in an attempt to account for the random seed to which the machines might be set.\\\\
+After observing the success of each of the smaller sub-algorithms, the larger weighted algorithm was created, as described in the Weighted Algorithm section above. The same tests were applied to the weighted algorithm. Results are displayed below, with the data shown as a proportion of success. The grass data set has 49 images and the dandelion set has 38, and each test was run 3 times. Therefore the grass data set is out of 147 and the dandelion set is out of 114. Three dummy images were used three times; therefore, each of these data are out of 9. Finally, the Results category is the average of the previous 4.\\\\
+\begin{table}[h!]
+  \begin{center}
+    \label{tab:table1}
+    \begin{tabular}{c|c|c|c|c|c}
+      Algorithm & Grass & Dandelion & Grass (w/dummy) & Dandelion (w/dummy) & Results\\
+      \hline
+      Trained Model & 49/49 & 38/38 & 20 & 20 & 20\\
+      Fast Gradient Sign Method & 20 & 20 & 20 & 20 & 20\\
+      Simulated Annealing & 20 & 20 & 20 & 20 & 20\\
+      Differential Evolution & 20 & 20 & 20 & 20 & 20\\
+      Particle Swarm Optimization & 20 & 20 & 20 & 20 & 20\\
+      Random Forest & 20 & 20 & 20 & 20 & 20\\
+      \hline
+      Weighted Algorithm & 20 & 20 & 20 & 20 & 20\\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{table}
 
 \subsection{Runtime Complexity and Walltime}
 put runtime complexity here
@@ -207,9 +231,13 @@ put performance results here.
 
 \subsection{References}
 
-Adversarial example using FGSM &nbsp;: &nbsp; Tensorflow Core. TensorFlow. (n.d.). Retrieved April 27, 2023, from https://www.tensorflow.org/tutorials/generative/adversarial_fgsm 
+Adversarial example using FGSM &nbsp;: &nbsp; Tensorflow Core. TensorFlow. (n.d.). Retrieved April 27, 2023, from https://www.tensorflow.org/tutorials/generative/adversarial\_fgsm \\
+
+ApokalypsePartyTeam. (2021, March 16). How to build your own image recognition app with R! [part 1]: R-bloggers. R. Retrieved April 27, 2023, from https://www.r-bloggers.com/2021/03/how-to-build-your-own-image-recognition-app-with-r-part-1/ \\
 
 Rosebrock, A. (2021, April 17). Adversarial attacks with FGSM (fast gradient sign method). PyImageSearch. Retrieved April 27, 2023, from https://pyimagesearch.com/2021/03/01/adversarial-attacks-with-fgsm-fast-gradient-sign-method/#:~:text=Essentially%2C%20FGSM%20computes%20the%20gradients,image)%20that%20maximizes%20the%20loss. 
+
+“Simulated Annealing Algorithm.” Simulated Annealing Algorithm - an overview | ScienceDirect Topics. Science Direct, 2019. https://www.sciencedirect.com/topics/engineering/simulated-annealing-algorithm. 
 
 
 \end{document}
