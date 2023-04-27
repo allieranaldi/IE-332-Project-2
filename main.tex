@@ -1,0 +1,149 @@
+\documentclass[11pt]{article}
+
+%  USE PACKAGES  ---------------------- 
+\usepackage[margin=0.7in,vmargin=1in]{geometry}
+\usepackage{amsmath,amsthm,amsfonts}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage{hyperref,color}
+\usepackage{enumitem,amssymb}
+\newlist{todolist}{itemize}{4}
+\setlist[todolist]{label=$\square$}
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\done}{\rlap{$\square$}{\raisebox{2pt}{\large\hspace{1pt}\cmark}}%
+\hspace{-2.5pt}}
+\newcommand{\HREF}[2]{\href{#1}{#2}}
+\usepackage{textcomp}
+\usepackage{listings}
+\lstset{
+basicstyle=\small\ttfamily,
+% columns=flexible,
+upquote=true,
+breaklines=true,
+showstringspaces=false
+}
+%  -------------------------------------------- 
+
+
+%  HEADER AND FOOTER (DO NOT EDIT) ----------------------
+\newcommand{\problemnumber}{0}
+\pagestyle{fancy}
+\fancyhead{}
+
+\newcommand{\newquestion}[1]{
+\clearpage % page break and flush floats
+\renewcommand{\problemnumber}{#1} % set problem number for header
+\phantom{}  % Put something on the page so it shows
+}
+\fancyfoot[L]{IE 332}
+\fancyfoot[C]{Assignment submission}
+\fancyfoot[R]{Page \thepage}
+\renewcommand{\footrulewidth}{0.4pt}
+
+%  --------------------------------------------
+
+
+%  COVER SHEET (FILL IN THE TABLE AS INSTRUCTED IN THE ASSIGNMENT) ----------------------
+\newcommand{\addcoversheet}{
+\clearpage
+\thispagestyle{empty}
+\vspace*{0.5in}
+
+\begin{center}
+\Huge{{\bf IE332 Project \#2}} % <-- replace with correct assignment #
+
+Due: April 28th, 11:59pm EST % <-- replace with correct due date and time
+\end{center}
+
+\vspace{0.3in}
+
+\noindent We have {\bf read and understood the assignment instructions}. We certify that the submitted work does not violate any academic misconduct rules, and that it is solely our own work. By listing our names below we acknowledge that any misconduct will result in appropriate consequences. 
+
+\vspace{0.2in}
+
+\noindent {\em ``As a Boilermaker pursuing academic excellence, I pledge to be honest and true in all that I do.
+Accountable together -- we are Purdue.''}
+
+\vspace{0.2in}
+
+\begin{table}[h!]
+  \begin{center}
+    \label{tab:table1}
+    \begin{tabular}{c|ccccc|c|c}
+      Student & Algorithm Development & Complexity Analysis & Implementation & Performance Analysis/Testing & Report & Overall & DIFF\\
+      \hline
+      Arisa Kulkarni & 20 & 20 & 20 & 20 & 20 & 100 & 0\\
+      Allie Ranaldi & 20 & 20 & 20 & 20 & 20 & 100 & 0\\
+      Noah Morrison & 20 & 20 & 20 & 20 & 20 & 100 & 0\\
+      Jonathan Papp & 20 & 20 & 20 & 20 & 20 & 100 & 0\\
+      Emilio Pozas & 20 & 20 & 20 & 20 & 20 & 100 & 0\\
+      \hline
+      St Dev & 0 & 0 & 0 & 0 & 0 & 0 & 0
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\vspace{0.2in}
+
+\noindent Date: April 28,2023
+}
+%  -----------------------------------------
+
+\begin{document}
+
+\addcoversheet
+
+
+%ASSIGNMENT BEGINS HERE
+%TABLE OF CONTENTS
+\newpage
+\tableofcontents
+
+%MAIN TEXT OF REPORT
+\newpage
+\section{Executive Summary}
+The following report details the team's optimization algorithms for adversarial attacks on a binary image classifier. Given a pre-trained image classifier that determines if a given image is a dandelion or grass, the team created five different machine learning/optimization algorithms to fool the image classifier. Each algorithm has a specific weight based on the expected performance of the given imputed image. The machine learning and optimization algorithms provide a foundation that can be used in the real-world application of AI infrastructure in many different organizational domains. 
+
+%Introduction & Objectives
+\section{Introduction \& Objectives}
+
+%Algorithm Explanation 
+\section{Machine Learning and Optimization Algorithms}
+\subsection{Fast Gradient Sign Method}
+Fast Gradient Sign Method, or FGSM, was one method the group tried to use to adjust the images in order to trick the algorithm. It is meant to trick the image processor by creating a new image from an input image that appears identical to the original to the human eye, but will cause the processor to be incorrect. It accomplishes this by computing the gradients of a loss function and then uses the sign of the gradients to create a new image. The following codes show the FGSM function as attempted by the group.
+
+\subsection{Simulated Annealing}
+
+\subsection{Differential Evolution}
+
+\subsection{Particle Swarm Optimization}
+
+\subsection{Random Forest}
+
+%SOLUTION HIGHLIGHTS
+\addcontentsline{toc}{section}{Solution Highlights}
+\subsection{Solution Highlights}
+Put solution highlights here.
+
+%APPENDIX
+\pagebreak
+\section{Appendix}
+
+
+\subsection{Testing/Correctness/Verification}
+put testing here.
+
+
+\subsection{Runtime Complexity and Walltime}
+put runtime complexity here
+
+
+\subsection{Performance}
+put performance results here.
+
+
+\end{document}
