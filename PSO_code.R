@@ -1,3 +1,5 @@
+# Written by Arisa Kulkarni
+
 library(keras)
 library(magick)
 library(magrittr)
