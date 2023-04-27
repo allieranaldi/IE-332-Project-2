@@ -103,6 +103,7 @@ Accountable together -- we are Purdue.''}
 \newpage
 \tableofcontents
 
+
 %MAIN TEXT OF REPORT
 \newpage
 \section{Executive Summary}
@@ -110,11 +111,25 @@ The following report details the team's optimization algorithms for adversarial 
 
 %Introduction & Objectives
 \section{Introduction \& Objectives}
+Machine learning algorithms are used to teach computers specific tasks; in this project, that task is a binary classification of images. These algorithms go through a training period to learn the information directly from trial and error. Each iteration of training improves performance. The training code was given to the team to evaluate and decide the best course of action to trick.
+
+The objectives for the team was to:
+
+\begin{enumerate}
+
+\end{enumerate}
+
+
+%Image Classifiers
+\section{Image Classifiers}
+
+%Aversary Attack Prevention
+\section{Adversary Attack Prevention}
 
 %Algorithm Explanation 
 \section{Machine Learning and Optimization Algorithms}
 \subsection{Fast Gradient Sign Method}
-Fast Gradient Sign Method, or FGSM, was one method the group tried to use to adjust the images in order to trick the algorithm. It is meant to trick the image processor by creating a new image from an input image that appears identical to the original to the human eye, but will cause the processor to be incorrect. It accomplishes this by computing the gradients of a loss function and then uses the sign of the gradients to create a new image. The following codes show the FGSM function as attempted by the group. 
+Fast Gradient Sign Method, or FGSM, was one method used for a child algorithm. It is used to adjust the images in order to trick the algorithm. It is meant to trick the image processor by creating a new image from an input image that appears identical to the original to the human eye, but will cause the processor to be incorrect. It accomplishes this by computing the gradients of a loss function and then uses the sign of the gradients to create a new image. The following codes show the FGSM function as attempted by the group. 
 
 \begin{lstlisting}[language=R, frame=single]
 install.packages("imager")
@@ -148,11 +163,16 @@ class_label <- class.ind2label(pred)
 \end{lstlisting}
 
 \subsection{Simulated Annealing}
-Simulated Annealing algorithm takes a heuristic approach for optimization problems. It is modeled from the annealing procedure of metal working. This approach was taken due to the common problems of other optimization algorithms that simply check their neighbourhood solutions and may get stuck in local minima. The SA algorithm incorporates two iterative loops that are modeled after the annealing process and the Metropolis criterion. The metropolis criterion is used explicitly to avoid the trap of getting stuck in local extreme. As you can see Simulated Annealing is a pure optimization algorithm. To use it for the purposes of tricking the image classification the objective function would focus on finding the pixels it can change. To perturb the image we then use a Gaussian noise. 
+Simulated Annealing algorithm takes a heuristic approach for optimization problems. It is modeled from the annealing procedure of metal working. This approach was taken due to the common problems of other optimization algorithms that simply check their neighbourhood solutions and may get stuck in local minima. The SA algorithm incorporates two iterative loops that are modeled after the annealing process and the Metropolis criterion. The metropolis criterion is used explicitly to avoid the trap of getting stuck in local extreme. As you can see Simulated Annealing is a pure optimization algorithm. To use it for the purposes of tricking the image classification the objective function would focus on finding the pixels it can change. 
+
+\begin{lstlisting}[language=R, frame=single]
+
+\end{lstlisting}
+
 \subsection{Differential Evolution}
 
 \subsection{Particle Swarm Optimization}
-Particle Swarm Optimization is an algorithm that generates an adversarial image that holds the ability to trick an image classification model. This is done by simulating interaction and movement between a group of particles in a controlled space to find the most optimal solution. In this machine learning algorithm, the possible solutions are considered the particles. The particles interact with each other by adjusting its movement velocity based on the experiences the particle itself has encountered and the experiences that it has witnessed from its neighboring particles. The velocity of the particle is updated with 
+Particle Swarm Optimization is an algorithm that generates an adversarial image that holds the ability to trick an image classification model. This is done by simulating interaction and movement between a group of particles in a controlled space to find the most optimal solution. In this machine learning algorithm, the possible solutions are considered the particles. The particles interact with each other by adjusting its movement velocity based on the experiences the particle itself has encountered and the experiences that it has witnessed from its neighboring particles. The velocity of the particle is updated with every iteration of a nested loop.
 
 \begin{lstlisting}[language=R, frame=single]
 
@@ -160,10 +180,15 @@ Particle Swarm Optimization is an algorithm that generates an adversarial image 
 
 \subsection{Random Forest}
 
+%Weighted Algorithm
+\section{Weighted Algorithm}
+
 %SOLUTION HIGHLIGHTS
 \addcontentsline{toc}{section}{Solution Highlights}
 \subsection{Solution Highlights}
 Put solution highlights here.
+
+
 
 %APPENDIX
 \pagebreak
@@ -171,8 +196,7 @@ Put solution highlights here.
 
 
 \subsection{Testing/Correctness/Verification}
-put testing here.
-
+To test the algorithms, the group first observed the success of the training model itself, without any adversarial attacks. The group tested both the grass set and the dandelion set, and kept results separate. This provided control group scores for which to compare the score of the sub-algorithms. The group then repeated the process for the datasets with \\
 
 \subsection{Runtime Complexity and Walltime}
 put runtime complexity here
@@ -180,6 +204,12 @@ put runtime complexity here
 
 \subsection{Performance}
 put performance results here.
+
+\subsection{References}
+
+Adversarial example using FGSM &nbsp;: &nbsp; Tensorflow Core. TensorFlow. (n.d.). Retrieved April 27, 2023, from https://www.tensorflow.org/tutorials/generative/adversarial_fgsm 
+
+Rosebrock, A. (2021, April 17). Adversarial attacks with FGSM (fast gradient sign method). PyImageSearch. Retrieved April 27, 2023, from https://pyimagesearch.com/2021/03/01/adversarial-attacks-with-fgsm-fast-gradient-sign-method/#:~:text=Essentially%2C%20FGSM%20computes%20the%20gradients,image)%20that%20maximizes%20the%20loss. 
 
 
 \end{document}
