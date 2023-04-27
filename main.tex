@@ -114,13 +114,49 @@ The following report details the team's optimization algorithms for adversarial 
 %Algorithm Explanation 
 \section{Machine Learning and Optimization Algorithms}
 \subsection{Fast Gradient Sign Method}
-Fast Gradient Sign Method, or FGSM, was one method the group tried to use to adjust the images in order to trick the algorithm. It is meant to trick the image processor by creating a new image from an input image that appears identical to the original to the human eye, but will cause the processor to be incorrect. It accomplishes this by computing the gradients of a loss function and then uses the sign of the gradients to create a new image. The following codes show the FGSM function as attempted by the group.
+Fast Gradient Sign Method, or FGSM, was one method the group tried to use to adjust the images in order to trick the algorithm. It is meant to trick the image processor by creating a new image from an input image that appears identical to the original to the human eye, but will cause the processor to be incorrect. It accomplishes this by computing the gradients of a loss function and then uses the sign of the gradients to create a new image. The following codes show the FGSM function as attempted by the group. 
+
+\begin{lstlisting}[language=R, frame=single]
+install.packages("imager")
+library(keras)
+library(imager)
+
+#This is for loading the model and the chosen image
+model <- load_model_tf("C:/Users/Quesadilla/Documents/332/Project2/model/dandelion_model")
+img <- image_load("C:/Users/Quesadilla/Documents/332/Project2/data-for-332.tar/data-for-332/data-for-332/data-for-332/dandelions/dandelion_yellow_flower_230715-1599547728.jpg")
+
+#this is for getting the loss function to compute the gradient of
+loss_fn <- function(y_true, y_pred){
+  mean(k_categorical_crossentropy(y_true, y_pred))
+}
+
+#this computes the gradient of the loss function and returns a new image
+fgsm <- function(model, x, y, esp = 0.01){
+  grad_fn <- tf.GradientTape(loss_fn, model$trainable_weights)
+  grad <- grad_fn(list(x, y))[[1]]
+  
+  x_adv <- x + esp * sign(grad)
+  
+  return(x_adv)
+}
+#this applies fgsm to the new image and runs it through the classifier
+x_adv <- fgsm(model, img, 1, esp = 0.1)
+
+pred <- model %>% predict(x_adv)
+
+class_label <- class.ind2label(pred)
+\end{lstlisting}
 
 \subsection{Simulated Annealing}
-
+Simulated Annealing algorithm takes a heuristic approach for optimization problems. It is modeled from the annealing procedure of metal working. This approach was taken due to the common problems of other optimization algorithms that simply check their neighbourhood solutions and may get stuck in local minima. The SA algorithm incorporates two iterative loops that are modeled after the annealing process and the Metropolis criterion. The metropolis criterion is used explicitly to avoid the trap of getting stuck in local extreme. As you can see Simulated Annealing is a pure optimization algorithm. To use it for the purposes of tricking the image classification the objective function would focus on finding the pixels it can change. To perturb the image we then use a Gaussian noise. 
 \subsection{Differential Evolution}
 
 \subsection{Particle Swarm Optimization}
+Particle Swarm Optimization is an algorithm that generates an adversarial image that holds the ability to trick an image classification model. This is done by simulating interaction and movement between a group of particles in a controlled space to find the most optimal solution. In this machine learning algorithm, the possible solutions are considered the particles. The particles interact with each other by adjusting its movement velocity based on the experiences the particle itself has encountered and the experiences that it has witnessed from its neighboring particles. The velocity of the particle is updated with 
+
+\begin{lstlisting}[language=R, frame=single]
+
+\end{lstlisting}
 
 \subsection{Random Forest}
 
