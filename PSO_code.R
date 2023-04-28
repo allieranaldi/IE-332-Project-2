@@ -3,7 +3,7 @@
 library(keras)
 
 # Load the image classification model
-model <- load_model_hdf5("./danelion_model")
+model <- load_model_tf("./danelion_model")
 
 # Load the test image
 test_image  <- image_load(paste("./data-for-332/data-for-332/grass",i,sep=""),
