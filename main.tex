@@ -73,8 +73,8 @@ Accountable together -- we are Purdue.''}
 \begin{table}[h!]
   \begin{center}
     \label{tab:table1}
-    \begin{tabular}{c|c|c|c|c|c|c|c}
-      Student & Algorithm Development & Complexity Analysis & Implementation & Performance Analysis/Testing & Report & Overall & DIFF\\
+    \begin{tabular}{l|p{2.2cm}|p{2cm}|p{2.6cm}|p{2cm}|p{1.2cm}|p{1.2cm}|p{1cm}}
+      Student & Algorithm Development & Complexity Analysis & Implementation & Performance Analysis/ Testing & Report & Overall & DIFF\\
       \hline
       Arisa Kulkarni & 20 & 20 & 20 & 20 & 20 & 100 & 0\\
       Allie Ranaldi & 20 & 20 & 20 & 20 & 20 & 100 & 0\\
@@ -111,7 +111,7 @@ The following report details the team's optimization algorithms for adversarial 
 
 %Introduction & Objectives
 \section{Introduction \& Objectives}
-Machine learning algorithms are used to teach computers specific tasks; in this project, that task is a binary classification of images. These algorithms go through a training period to learn the information directly from trial and error. Each iteration of training improves performance. The training code was given to the team to evaluate and decide the best course of action to trick. \newline
+Machine learning algorithms are used to teach computers specific tasks; in this project, that task is a binary classification of images. These algorithms go through a training period to learn the information directly from trial and error. Each iteration of training improves performance(MathWorks). The training code was given to the team to evaluate and decide the best course of action to trick. \newline
 
 \noindent At a high level, the objectives for the team were to:
 \begin{enumerate}
@@ -124,16 +124,16 @@ Machine learning algorithms are used to teach computers specific tasks; in this 
 
 %Image Classifiers
 \section{Image Classifiers}
-The image classifier provided for this project is an example of a convoluted neural network (CNN). Once it is trained, the way a CNN works is by sampling small sections of an input image and calculating the convolution of neighboring pixel values (ApokalypsePartyTeam, 2021). In other words, it calculates 
+The image classifier provided for this project is an example of a convoluted neural network (CNN). Once it is trained, the way a CNN works is by sampling small sections of an input image at a time and calculating the convolution of neighboring pixel values (ApokalypsePartyTeam, 2021). In other words, it calculates how different neighboring pixels are from each other to determine distinguishing features such as sharp edges that create a shape, or sharp color contrasts that make an identifying pattern. It can then refer to its archive of training to compare where it has seen similar features and make its prediction to what the image is.
 
-%Aversary Attack Prevention
-\section{Adversary Attack Prevention}
-
+%Adversary Attack 
+\section{Adversary Attack}
+Adversary Attacks are a technique that attempts to fool models with deceptive data (Wiggers, 2021). The most common reason to use these attacks is to malfunction a machine learning model. The team's machine learning and optimization algorithms are an adversary attack. The algorithms present an image with inaccurate/misrepresentation pixel data to fool the classifier. Some of the team's attacks are in the form of noise; one type of adversarial attack is White Box Attacks which can access the model's parameters and obtain labels for the inputs provided (Analytics Vidhya, 2022). 
 
 %Algorithm Explanation 
 \section{Machine Learning and Optimization Algorithms}
 \subsection{Fast Gradient Sign Method}
-Fast Gradient Sign Method, or FGSM, was one method used for a child algorithm. This method was chosen because it is specially designed to create adversarial images, which are images meant to confuse a convoluted neural network and cause a misclassification (Rosebrock, 2021). Not only does it confuse a CNN, but FSGM also causes a CNN to confidently make a mistake. It accomplishes this by computing a loss function from the gradients of the input image from the CNN. The FGSM then determines which input pixels contribute to the loss value the most, and adjusts them accordingly to create the adversarial image. The result is a "white box" attack, or a new image that appears identical to the input image to the human eye, but confuses the CNN by adjusting the colors of pixels slightly. The following codes show the FGSM function as used by the group. 
+Fast Gradient Sign Method, or FGSM, was one method used for a child algorithm. This method was chosen because it is specially designed to create adversarial images, which are images meant to confuse a convoluted neural network and cause a misclassification (Rosebrock, 2021). Not only does it confuse a CNN, but FSGM also causes a CNN to confidently make a mistake. It accomplishes this by computing a loss function from the gradients of the input image from the CNN. The FGSM then determines which input pixels contribute to the loss value the most, and adjusts them accordingly to create the adversarial image (Tensorflow, 2022). The result is a "white box" attack, or a new image that appears identical to the input image to the human eye, but confuses the CNN by adjusting the colors of pixels slightly. The following code shows the FGSM function as used by the group. 
 
 \begin{lstlisting}[language=R, frame=single]
 library(keras)
@@ -166,32 +166,207 @@ class_label <- class.ind2label(pred)
 \end{lstlisting}
 
 \subsection{Simulated Annealing}
-Simulated Annealing algorithm takes a heuristic approach for optimization problems. It is modeled from the annealing procedure of metal working, where a metal is heated and then slowly cooled to make its crystal structure more stable. Similarly, in simulated annealing the algorithm starts with a high temperature, which allows it to explore a wide range of solutions an then gradually cools down to a low temperature, which forces the algorithm to converge toward the global minimum.
-
+Simulated Annealing algorithm takes a heuristic approach for optimization problems. It is modeled from the annealing procedure of metal working, where a metal is heated and then slowly cooled to make its crystal structure more stable. Similarly, in simulated annealing the algorithm starts with a high temperature, which allows it to explore a wide range of solutions and then gradually cool down to a low temperature, which forces the algorithm to converge toward the global minimum. SA algorithm proposes an effective solution to this problem as incorporating two iterative loops which are the cooling procedure for the annealing process and Metropolis criterion. (Science Direct, 2017) As this method is pure optimization to search for the best pixels to change, we have Gaussian perturbation function that edits the image to be fooled with the set pixels.
+\vspace{0.2 in}
 \begin{lstlisting}[language=R, frame=single]
+#Gaussian perturbation function
+apply_perturbation <- function(img, x) {
+  # Reshape x to match dimensions of image
+  x <- matrix(x, nrow = nrow(img), ncol = ncol(img), byrow = TRUE)
+  
+  # Add perturbation to image
+  img_perturbed <- img + x
+  
+  # Clip pixel values to [0, 1] range
+  img_perturbed[img_perturbed < 0] <- 0
+  img_perturbed[img_perturbed > 1] <- 1
+  
+  # Return perturbed image
+  img_perturbed
+}
 
+# Convert the image to a numeric vector
+x0 <- image_to_array(img)
+
+# Define the objective function
+obj_fn <- function(x) {
+  # Convert the numeric vector back to an image
+  img <- array_to_img(x, dim_ordering = "tf")
+  # Get the predicted class for the image
+  class <- predict(model, image_to_matrix(img))
+  # Return the negative probability of the target class
+  -class[target_class + 1]
+}
+
+# Set the search space bounds
+lower <- rep(0, length(x0))
+upper <- rep(255, length(x0))
+
+# Set the optimization control parameters
+control <- list(maxit = 5000, trace = TRUE)
+
+# Set the temperature and other parameters for the SA algorithm
+temp <- 1.0
+temp_min <- 0.01
+alpha <- 0.99
+
+# Run the SA optimization algorithm
+result <- optim_sa(start = x0, fun = obj_fn, maximization = FALSE,
+                   lower = lower, upper = upper, control = control)
+ 
 \end{lstlisting}
 
 \subsection{Differential Evolution}
 
 \subsection{Particle Swarm Optimization}
-Particle Swarm Optimization is an algorithm that generates an adversarial image that holds the ability to trick an image classification model. This is done by simulating interaction and movement between a group of particles in a controlled space to find the most optimal solution. In this machine learning algorithm, the possible solutions are considered the particles. The particles interact with each other by adjusting its movement velocity based on the experiences the particle itself has encountered and the experiences that it has witnessed from its neighboring particles. The velocity of the particle is updated with every iteration of a nested loop.
+Particle Swarm Optimization is an algorithm that generates an adversarial image that holds the ability to trick an image classification model. This is done by simulating interaction and movement between a group of particles in a controlled space to find the most optimal solution. This algorithm was inspired by the system of a flock of birds moving collectively to benefit from one another's experiences (Tam, 2021). In this machine learning algorithm, the possible solutions are considered the particles. The particles interact with each other by adjusting its movement velocity based on the experiences the particle itself has encountered and the experiences that it has witnessed from its neighboring particles. The velocity of the particle is updated with every iteration of a nested loop. With each updated velocity, the particle location and fitness is updated as well. The fitness function is a key component of the algorithm as is addresses the best fit functionality of each possible solution. The function assigns numerical values of fitness to each solution based on the project objective. After evaluating the fitness scores of each particle, this machine learning algorithm is finally able to create an adversarial image that can be used to test the durability of the image classification model against potential adversarial attacks.\\
 
+After loading the image classification model and test image in the R code and converting the images into an array of pixels, we must create a fitness function to determine the functionality of the solution possibilities. This is done by the code displayed below:
 \begin{lstlisting}[language=R, frame=single]
-
+fitness_function <- function(particle) {
+  # For generating the adversarial image
+  adv_x <- x
+  adv_x[,,particle == 1] <- adv_x[,,particle == 1] + epsilon
+  adv_x[adv_x > 1] <- 1
+  adv_x[adv_x < 0] <- 0
+  
+  # For evaluating the model prediction on the adversarial image
+  pred <- model %>% predict(adv_x)
+  
+  # This returns 1 - predicted probability of true class as fitness score
+  1 - pred[1, class_idx]
+}
 \end{lstlisting}
 
-\subsection{Random Forest}
+After initializing key variables such as the particles, velocities, personal and global best positions, and fitness scores, it is crucial to create code to update the velocities and position for each iteration. This will be used to calculate the fitness scores and generate an adversarial image with an ideal solution.
+\begin{lstlisting}[language=R, frame=single]
+# Define velocity and position update rules
+for (iter in 1:max_iterations) {
+  for (i in 1:n_particles) {
+    # This updates the velocity of the particle
+    cognitive_component <- cognitive_coeff * runif(n_pixels) * (personal_best_position[i,] - particles[i,])
+    social_component <- social_coeff * runif(n_pixels) * (global_best_position - particles[i,])
+    velocities[i,] <- inertia_weight * velocities[i,] + cognitive_component + social_component
+    
+    # This updates the position of the particle
+    particles[i,] <- ifelse(runif(n_pixels) < sigmoid(velocities[i,]), 1, 0)
+    
+    # This evaluates the fitness of the particle
+    fitness <- fitness_function(particles[i,])
+    
+    # Update personal and global best positions
+    if (fitness > personal_best_fitness[i]) {
+      personal_best_position[i,] <- particles[i,]
+      personal_best_fitness[i] <- fitness
+    }
+    if (fitness > global_best_fitness) {
+      global_best_position <- particles[i,]
+      global_best_fitness <- fitness
+    }
+  }
+}
+\end{lstlisting}
 
+
+\subsection{Random Forest}
+A random forest is a machine learning algorithm that combines the results of multiple decision trees to make a decision. In the context of this project, a random forest algorithm was tasked with deciding which pixels to change in an input image and then make a change, returning an adversarial image. On their own, decision trees are prone to errors like over fitting, but by using a random forest the results are more accurate (Finnstats, 2021). By using this, a random forest can identify which pixels would result in an optimal change. Due to the complexity of Random forest and the runtime being quite long we decided not to use random forest in this project. 
+
+\subsection{DeepFool}
+Deep fool is an algorithm used in deep learning for generating adversarial examples. DeepFool is effective at generating small perturbations that can cause a deep neural network to misclassify an image. This makes it a useful tool for testing the robustness of machine learning models and identifying a potential vulnerabilities. For binary classifiers works in the following way. 
+\begin{equation}
+    r_* (x_0) = - \frac{f(x_0)}{||w||_2^2}w
+\end{equation}
+The DeepFool algorithm computes the perturbation of r*(x) by having the output prediction of f(x\_0) divided by the L2-norm of the computed gradient w of the loss function, giving the scalar for the perturbation. This is then multiplied by the unit vector of w using L2-norm and finally has the sign inverted so the loss of the classifier f is increased, as shown in equation. (Medium, 2022)
+\vspace{0.2 in}
+
+\begin{lstlisting}[language=R, frame=single]
+# Define the DeepFool attack
+attack <- deepfool(model, max_iter = 100)
+
+# Generate an adversarial example
+adv_img <- attack(img)
+\end{lstlisting}
 %Weighted Algorithm
 \section{Weighted Algorithm}
 
 %SOLUTION HIGHLIGHTS
 \addcontentsline{toc}{section}{Solution Highlights}
 \subsection{Solution Highlights}
-Put solution highlights here.
-
-
+After each of the smaller sub-algorithms had were created, testing was done on each of them with the given grass and dandelion data sets. Details of the testing are described in the appendix, and results are shown below.
+\begin{table}[h!]
+  \begin{center}
+    \label{tab:table1}
+    \begin{tabular}{c|c|c|c|c|c}
+      \hline
+      Algorithm & Grass & Dandelion & Grass (w/dummy) & Dandelion (w/dummy) & Results\\
+      \hline
+      Trained Model & 0.000 & 0.000 & 0.000 & 1.000 & 0.000\\
+      Fast Gradient Sign Method & 0.959 & 0.974 & 0.333 & 0.667 & 0.967\\
+      Simulated Annealing & 0.694 & 0.842 & 0.333 & 0.667 & 0.768\\
+      Differential Evolution & 0.673 & 0.579 & 0.000 & 1.000 & 0.626\\
+      Particle Swarm Optimization & 0.959 & 0.895 & 0.000 & 1.000 & 0.927\\
+      Random Forest & 0.755 & 0.737 & 0.333 & 0.667 & 0.746\\
+      \hline
+      Weighted Algorithm & 0.980 & 1.000 & 0.444 & 0.555 & 0.990\\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{table}
+The group used the results of the testing to determine the strengths of each sub-algorithm; i.e., which sub-algorithm provides the greatest probability of creating a successful adversarial attack on the image classifier. By ranking each sub-algorithm by their success rates, the team was able to create and assign weights to be used by the larger algorithm. The team discussed and agreed upon the following weights, adding to a sum of 100 voting points. These weights were chosen as they allow the most successful sub-algorithm to have the strongest vote in the poll, but not such a strong majority that it cannot be outweighed.
+\begin{table}[h!]
+  \begin{center}
+    \label{tab:table1}
+    \begin{tabular}{c|c}
+      \hline
+      Ranking & Weight\\
+      \hline
+      1 & 28\\
+      2 & 23\\
+      3 & 19\\
+      4 & 17\\
+      5 & 13\\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{table}
+The team also decided to keep the weights separate for the grass and dandelion models, as the ranking of the sub-algorithms differed between the two. Therefore, based on the results of the testing data and the pre-determined weights, the following voting weights were assigned.
+\begin{center}\textbf{Grass}
+\begin{table}[h!]
+  \begin{center}
+    \label{tab:table1}
+    \begin{tabular}{c|c}
+      \hline
+      Algorithm & Weight\\
+      \hline
+      Fast Gradient Sign Method & 28\\
+      Particle Swarm Optimization & 23\\
+      Random Forest & 19\\
+      Simulated Annealing & 17\\
+      Differential Evolution & 13\\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{table}
+\end{center}
+\begin{center}\textbf{Dandelion}
+\begin{table}[h!]
+  \begin{center}
+    \label{tab:table1}
+    \begin{tabular}{c|c}
+      \hline
+      Algorithm & Weight\\
+      \hline
+      Fast Gradient Sign Method & 28\\
+      Particle Swarm Optimization & 23\\
+      Simulated Annealing & 19\\
+      Random Forest & 17\\
+      Differential Evolution & 13\\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{table}
+\end{center}
+The large algorithm takes the pixels that are suggested to be changed by the sub-algorithms and multiplies them times the number of votes that the particular sub-algorithm owns. Then it computes the number of pixels \textit{n} that can be changed based on the image size and user-inputted proportion of changed pixels. Finally, it selects the first \textit{n} pixels on the list of pixels sorted by votes, and alters those based on the sub-algorithms. The outputted result from the larger algorithm is then sent through the training model for each image to observe results.
 
 %APPENDIX
 \pagebreak
@@ -200,34 +375,35 @@ Put solution highlights here.
 
 \subsection{Testing/Correctness/Verification}
 To test the algorithms, the group first observed the success of the training model itself, without any adversarial attacks. The group tested both the grass set and the dandelion set, and kept results separate. This provided control group scores for which to compare the score of the sub-algorithms. The group then repeated the process for each the data sets with each sub-algorithm and tracked their success in fooling the model. Results are displayed in the table below.\\\\
-Regarding correctness of the algorithm, the group added dummy images to the data sets, such as a bike and a bus. The group then repeated the testing as described above to observe the ability of the model to detect these non-target images, and the effect to which each sub-algorithm alters the success of the model in detecting them. Results are displayed in the table below.\\\\
+Regarding correctness of the algorithm, the group added dummy images to the data sets, such as a bike and a bus. The group then repeated the testing as described above to observe the ability of the model to detect these non-target images, and the effect to which each sub-algorithm alters the success of the model in detecting them. Results are displayed in the table below. After observing these results, the group decided that the binary quality of the model was creating unusable data. Since the model must identify an image as either grass or dandelions, it will produce a high percentage of a wrong selection with a dummy image. Furthermore, the trained model seems to think that most images are grass, which skewed the results.\\\\
 To verify the precision of these models, sub-algorithms, and the larger weighted algorithm, each of the above tests were repeated twice more. This was in an attempt to account for the random seed to which the machines might be set.\\\\
-After observing the success of each of the smaller sub-algorithms, the larger weighted algorithm was created, as described in the Weighted Algorithm section above. The same tests were applied to the weighted algorithm. Results are displayed below, with the data shown as a proportion of success. The grass data set has 49 images and the dandelion set has 38, and each test was run 3 times. Therefore the grass data set is out of 147 and the dandelion set is out of 114. Three dummy images were used three times; therefore, each of these data are out of 9. Finally, the Results category is the average of the previous 4.\\\\
+After observing the success of each of the smaller sub-algorithms, the larger weighted algorithm was created, as described in the Weighted Algorithm section above. The same tests were applied to the weighted algorithm. Results are displayed below, with success rate determined as the proportion at which the model fails to detect grass or dandelions. The grass data set has 49 images and the dandelion set has 38, and each test was run three times. Therefore the grass data set is out of 147 and the dandelion set is out of 114. Three dummy images were used three times; therefore, each of these data are out of 9. Finally, the Results column is the average of the first two columns, since the group determined that the dummy image data was unusable.
 \begin{table}[h!]
   \begin{center}
     \label{tab:table1}
     \begin{tabular}{c|c|c|c|c|c}
+      \hline
       Algorithm & Grass & Dandelion & Grass (w/dummy) & Dandelion (w/dummy) & Results\\
       \hline
-      Trained Model & 49/49 & 38/38 & 20 & 20 & 20\\
-      Fast Gradient Sign Method & 20 & 20 & 20 & 20 & 20\\
-      Simulated Annealing & 20 & 20 & 20 & 20 & 20\\
-      Differential Evolution & 20 & 20 & 20 & 20 & 20\\
-      Particle Swarm Optimization & 20 & 20 & 20 & 20 & 20\\
-      Random Forest & 20 & 20 & 20 & 20 & 20\\
+      Trained Model & 0.000 & 0.000 & 0.000 & 1.000 & 0.000\\
+      Fast Gradient Sign Method & 0.959 & 0.974 & 0.333 & 0.667 & 0.967\\
+      Simulated Annealing & 0.694 & 0.842 & 0.333 & 0.667 & 0.768\\
+      Differential Evolution & 0.673 & 0.579 & 0.000 & 1.000 & 0.626\\
+      Particle Swarm Optimization & 0.959 & 0.895 & 0.000 & 1.000 & 0.927\\
+      Random Forest & 0.755 & 0.737 & 0.333 & 0.667 & 0.746\\
       \hline
-      Weighted Algorithm & 20 & 20 & 20 & 20 & 20\\
+      Weighted Algorithm & 0.980 & 1.000 & 0.444 & 0.555 & 0.990\\
       \hline
     \end{tabular}
   \end{center}
 \end{table}
 
 \subsection{Runtime Complexity and Walltime}
-put runtime complexity here
+The runtime of each child algorithm varies because of the natures of each process. FGSM is a relatively quick process, as it is easy for a computer to find how much a pixel contributes to the overall loss using a chain rule and finding the required gradients (Tensorflow, 2022). Also, since the CNN is pre-trained, the model's parameters are constant and therefor reliably susceptible to the same attack, which means FGSM's only job is to fool a static model.
 
 
 \subsection{Performance}
-put performance results here.
+
 
 \subsection{References}
 
@@ -235,9 +411,23 @@ Adversarial example using FGSM &nbsp;: &nbsp; Tensorflow Core. TensorFlow. (n.d.
 
 ApokalypsePartyTeam. (2021, March 16). How to build your own image recognition app with R! [part 1]: R-bloggers. R. Retrieved April 27, 2023, from https://www.r-bloggers.com/2021/03/how-to-build-your-own-image-recognition-app-with-r-part-1/ \\
 
-Rosebrock, A. (2021, April 17). Adversarial attacks with FGSM (fast gradient sign method). PyImageSearch. Retrieved April 27, 2023, from https://pyimagesearch.com/2021/03/01/adversarial-attacks-with-fgsm-fast-gradient-sign-method/#:~:text=Essentially%2C%20FGSM%20computes%20the%20gradients,image)%20that%20maximizes%20the%20loss. 
+Rosebrock, A. (2021, April 17). Adversarial attacks with FGSM (fast gradient sign method). PyImageSearch. Retrieved April 27, 2023, from https://pyimagesearch.com/2021/03/01/adversarial-attacks-with-fgsm-fast-gradient-sign-method/#:~:text=Essentially%2C%20FGSM%20computes%20the%20gradients,image)%20that%20maximizes%20the%20loss.
+\\
 
-“Simulated Annealing Algorithm.” Simulated Annealing Algorithm - an overview | ScienceDirect Topics. Science Direct, 2019. https://www.sciencedirect.com/topics/engineering/simulated-annealing-algorithm. 
+“Simulated Annealing Algorithm.” Simulated Annealing Algorithm - an overview | ScienceDirect Topics. Science Direct, 2019. https://www.sciencedirect.com/topics/engineering/simulated-annealing-algorithm. \\
 
+Husmann, Kai. “Flexible Optimization with Simulated Annealing.” R. Accessed April 27, 2023. https://search.r-project.org/CRAN/refmans/optimization/html/optim_sa.html. \\
 
+What is machine learning?: How it works, tutorials, and examples. What is Machine Learning? | How it Works, Tutorials, and Examples - MATLAB &amp; Simulink. (n.d.). Retrieved April 24, 2023, from https://www.mathworks.com/discovery/machine-learning.html \\
+
+Finnstats. (2021, April 13). Random Forest in R: R-bloggers. R. Retrieved April 27, 2023, from https://www.r-bloggers.com/2021/04/random-forest-in-r/#:~:text=Random%20Forest%20in%20R%2C%20Random,to%20identify%20the%20important%20attributes. 
+\\
+
+Wiggers, K. (2021, May 29). Adversarial attacks in machine learning: What they are and how to stop them. VentureBeat. Retrieved April 26, 2023, from https://venturebeat.com/security/adversarial-attacks-in-machine-learning-what-they-are-and-how-to-stop-them/ 
+\\
+Machine learning: Adversarial attacks and defense. Analytics Vidhya. (2022, September 1). Retrieved April 27, 2023, from https://www.analyticsvidhya.com/blog/2022/09/machine-learning-adversarial-attacks-and-defense/#:~:text=The%20most%20common%20reason%20is,deceive%20an%20already%20trained%20model.
+\\
+Tam, A. (2021, October 11). A gentle introduction to particle swarm optimization. MachineLearningMastery.com. Retrieved April 27, 2023, from https://machinelearningmastery.com/a-gentle-introduction-to-particle-swarm-optimization/
+\\
+Morgan, Adrian. “A Review of DeepFool: A Simple and Accurate Method to Fool Deep Neural Networks.” Medium. Machine Intelligence and Deep Learning, May 2, 2022. https://medium.com/machine-intelligence-and-deep-learning-lab/a-review-of-deepfool-a-simple-and-accurate-method-to-fool-deep-neural-networks-b016fba9e48e. 
 \end{document}
